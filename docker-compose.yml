@@ -5,8 +5,11 @@ services:
     image: nginx-nexusproxy
     ports:
       - '443:443'
-      - '6666:6666'
-      - '7777:7777'
+      - '5000:5000'
+      - '5001:5001'
+      - '5002:5002'
+      - '5003:5003'
+      - '5004:5004'
     links:
       - nexus-repo
     command: [ nginx, '-g', 'daemon off;' ]

@@ -27,7 +27,7 @@ mkdir ../certs
 openssl genrsa -passout pass:"$1" -des3 -out ../certs/rootCA.key 2048
 
 # Generate Root PEM (rootCA.pem) with 1024 days validity.
-openssl req -passin pass:"$1" -subj "/C=US/ST=Random/L=Random/O=Global Security/OU=IT Department/CN=Local Certificate"  -x509 -new -nodes -key ../certs/rootCA.key -sha256 -days 1024 -out ../certs/rootCA.pem
+openssl req -passin pass:"$1" -subj "/C=IR/ST=Tehran/L=Tehran/O=Global Security/OU=Devops Department/CN=Local Certificate"  -x509 -new -nodes -key ../certs/rootCA.key -sha256 -days 2024  -out ../certs/rootCA.pem
 
 # Add root cert as trusted cert
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -47,8 +47,8 @@ fi
 
 
 # Generate nexus Cert
-openssl req -subj "/C=US/ST=Random/L=Random/O=Global Security/OU=IT Department/CN=localhost"  -new -sha256 -nodes -out ../certs/nexus.csr -newkey rsa:2048 -keyout ../certs/nexuskey.pem
-openssl x509 -req -passin pass:"$1" -in ../certs/nexus.csr -CA ../certs/rootCA.pem -CAkey ../certs/rootCA.key -CAcreateserial -out ../certs/nexuscert.crt -days 500 -sha256 -extfile <(printf "subjectAltName=DNS:localhost,DNS:nexus-repo")
+openssl req -subj "/C=IR/ST=Tehran/L=Tehran/O=Global Security/OU=Devops Department/CN=localhost"  -new -sha256 -nodes -out ../certs/nexus.csr -newkey rsa:2048 -keyout ../certs/nexuskey.pem
+openssl x509 -req -passin pass:"$1" -in ../certs/nexus.csr -CA ../certs/rootCA.pem -CAkey ../certs/rootCA.key -CAcreateserial -out ../certs/nexuscert.crt -days 2024 -sha256 -extfile <(printf "subjectAltName=DNS:localhost,DNS:nexus-repo")
 
 cd ../nginx/
 echo $PWD
