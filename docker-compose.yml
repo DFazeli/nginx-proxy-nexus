@@ -10,6 +10,7 @@ services:
       - '5002:5002'
       - '5003:5003'
       - '5004:5004'
+      - '5005:5005'
     links:
       - nexus-repo
     command: [ nginx, '-g', 'daemon off;' ]
