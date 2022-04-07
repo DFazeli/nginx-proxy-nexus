@@ -2,19 +2,13 @@ version: '3'
 
 services:
   nginx-nexusproxy:
-    hostname: nginx  
-    container_name: nginx    
-    image: nginx-nexusproxy
+    hostname: nginx-proxy  
+    container_name: nginx-proxy
+    image: nginx-nexus-proxy
     ports:
       - '443:443'
-      - '5085:5085'  
-      - '5086:5086'  
-        # - '5000:5000'
-        # - '5001:5001'
-        # - '5002:5002'
-        # - '5003:5003'
-        # - '5004:5004'
-        # - '5005:5005'
+      - '5001:5001'  
+      - '5002:5002'  
     links:
       - nexus-repo
     command: [ nginx, '-g', 'daemon off;' ]
@@ -27,6 +21,7 @@ services:
        - '8081:8081'
        - '8085:8085'
        - '8086:8086'  
+       - '8087:8087'  
     volumes:
       - 'nexus3-data:/nexus-data'
 
