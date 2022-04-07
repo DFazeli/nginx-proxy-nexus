@@ -1,0 +1,75 @@
+events {
+}
+
+http {
+
+  upstream docker-hub {
+     server localhost:5003;
+  }
+  proxy_send_timeout        120;
+  proxy_read_timeout        300;
+  proxy_buffering           off;
+  keepalive_timeout         5 5;
+  tcp_nodelay               on;
+
+  ssl                       on;
+  ssl_certificate           /etc/nginx/external/nexuscert.crt;
+  ssl_certificate_key       /etc/nginx/external/nexuskey.pem;
+
+  client_max_body_size      0;
+
+  map $upstream_http_docker_distribution_api_version $docker_distribution_api_version {
+    '' 'registry/2.0';
+  }
+
+
+
+server {
+    listen 443 ssl;
+    server_name  nginx-repo;    
+    location / {
+      proxy_pass            http://nexus-repo:8081/;
+      proxy_set_header      Host $host;
+      proxy_set_header      X-Real-IP $remote_addr;
+      proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header      X-Forwarded-Host $server_name;
+      proxy_set_header      X-Forwarded-Proto $scheme;
+  }
+}
+
+server {
+  listen 443 ssl;
+  server_name docker-hub.kian.digital;
+
+  # SSL
+#  ssl_certificate /etc/nginx/kian.digital-bundle.pem;
+#  ssl_certificate_key /etc/nginx/kian.digital.key;
+
+#   ssl_certificate     /etc/nginx/external/nexuscert.crt
+#   ssl_certificate_key /etc/nginx/external/nexuskey.pem
+
+  client_max_body_size 0;
+  chunked_transfer_encoding on;
+
+  location /v2/ {
+    # Do not allow connections from docker 1.5 and earlier
+    # docker pre-1.6.0 did not properly set the user agent on ping, catch "Go *" user agents
+    if ($http_user_agent ~ "^(docker\/1\.(3|4|5(?!\.[0-9]-dev))|Go ).*$" ) {
+      return 404;
+    }
+
+    ## If $docker_distribution_api_version is empty, the header is not added.
+    ## See the map directive above where this variable is defined.
+    add_header 'Docker-Distribution-Api-Version' $docker_distribution_api_version always;
+
+    proxy_pass                          http://docker-hub;
+    proxy_set_header  Host              $http_host;   # required for docker client's sake
+    proxy_set_header  X-Real-IP         $remote_addr; # pass on real client's IP
+    proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto $scheme;
+    proxy_read_timeout                  900;
+  }
+ }
+}
+
+

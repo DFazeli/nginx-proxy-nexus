@@ -1,9 +1,10 @@
 FROM nginx:alpine
 
-RUN mkdir -p /etc/nginx/external
+#RUN mkdir -p /etc/nginx/external
+RUN mkdir -p /etc/ssl/certs/
 
-COPY nexuskey.pem /etc/nginx/external/nexuskey.pem
+COPY  ca.crt  /etc/ssl/certs/ca.crt
 
-COPY nexuscert.crt /etc/nginx/external/nexuscert.crt
+COPY  registry-key.key /etc/ssl/certs/registry-key.key
 
 COPY nginx.conf /etc/nginx/nginx.conf
