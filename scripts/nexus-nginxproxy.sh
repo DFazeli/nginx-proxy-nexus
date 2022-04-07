@@ -35,6 +35,8 @@ echo $PWD
 cp $CERT_PATH/ca.crt            ca.crt
 cp $CERT_PATH/registry-key.key  registry-key.key
 
+#    --------- Update certs file on ubuntu server (circtl use our ca.crt for pull image from local repository) --------
+
 scp $CERT_PATH/ca.crt $USR@m1:/tmp/ && ssh david@m1 sudo mv /tmp/ca.crt /usr/local/share/ca-certificates/ && ssh $USR@m1  sudo update-ca-certificates
 scp $CERT_PATH/ca.crt $USR@m2:/tmp/ && ssh david@m2 sudo mv /tmp/ca.crt /usr/local/share/ca-certificates/ && ssh $USR@m2  sudo update-ca-certificates
 scp $CERT_PATH/ca.crt $USR@w1:/tmp/ && ssh david@w1 sudo mv /tmp/ca.crt /usr/local/share/ca-certificates/ && ssh $USR@w1  sudo update-ca-certificates
