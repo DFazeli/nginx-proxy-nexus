@@ -1,3 +1,3 @@
-.key
-.crt
-.old
+*.key
+*.crt
+*.old
